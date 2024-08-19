@@ -38,7 +38,14 @@ ENV ROOT=/stable-diffusion-webui
 
 COPY --from=download /repositories/ ${ROOT}/repositories/
 RUN mkdir ${ROOT}/interrogate && cp ${ROOT}/repositories/clip-interrogator/clip_interrogator/data/* ${ROOT}/interrogate
+# fix for issue 719
+# https://github.com/AbdBarho/stable-diffusion-webui-docker/issues/719
 
+RUN --mount=type=cache,target=/root/.cache/pip \
+   pip uninstall -y typing_extensions && \
+   pip install typing_extensions==4.11.0
+
+# end of fix #
 RUN --mount=type=cache,target=/root/.cache/pip \
   pip install pyngrok xformers==0.0.26.post1 \
   git+https://github.com/TencentARC/GFPGAN.git@8d2447a2d918f8eba5a4a01463fd48e45126a379 \
